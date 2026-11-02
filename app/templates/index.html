@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>B3 Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar glass" id="sidebar">
+      <a class="brand" href="#" data-page="dashboard"><span class="brand-mark small">B<span>3</span></span><span class="brand-name">b3<span>monitor</span></span></a>
+      <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Recolher ou expandir menu">⇤</button>
+      <div class="side-label">MENU PRINCIPAL</div>
+      <nav class="nav-list" aria-label="Navegação principal">
+        <a class="nav-item active" href="#dashboard" data-page="dashboard"><span class="nav-icon">◫</span><span>Dashboard</span></a>
+        <a class="nav-item" href="#carteira" data-page="carteira"><span class="nav-icon">▤</span><span>Minha Carteira</span></a>
+        <a class="nav-item" href="#oportunidades" data-page="oportunidades"><span class="nav-icon">◉</span><span>Oportunidades</span></a>
+        <a class="nav-item" href="#watchlist" data-page="watchlist"><span class="nav-icon">☆</span><span>Watchlist</span></a>
+        <a class="nav-item" href="#relatorios" data-page="relatorios"><span class="nav-icon">▧</span><span>Relatórios</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <a class="nav-item" href="#configuracoes" data-page="configuracoes"><span class="nav-icon">⚙</span><span>Configurações</span></a>
+        <form action="/logout" method="post"><button class="nav-item nav-button" type="submit"><span class="nav-icon">↪</span><span>Sair</span></button></form>
+        <div class="user-chip"><div class="avatar">{{ user.username[:1]|upper }}</div><div><strong>{{ user.username }}</strong><small>Conta pessoal</small></div><span class="online-dot"></span></div>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <div><p class="eyebrow" id="pageEyebrow">MERCADO BRASILEIRO</p><h1 id="pageTitle">Visão geral</h1></div>
+        <div class="topbar-right"><span class="market-status" id="marketStatus"><i></i> Conectando</span><button class="icon-button" id="refreshButton" aria-label="Atualizar dados">⟳</button></div>
+      </header>
+      {% if user.must_change_password %}
+      <div class="notice notice-warn"><span>!</span><div><strong>Proteja sua conta</strong><p>Você ainda usa a senha padrão. Altere-a em <a href="#configuracoes" data-page="configuracoes">Configurações</a> no primeiro acesso.</p></div></div>
+      {% endif %}
+      <div class="global-error" id="globalError" role="status" hidden></div>
+
+      <section class="page-section active" id="page-dashboard">
+        <div class="summary-grid">
+          <article class="summary-card glass"><div class="card-heading"><span>Ibovespa</span><span class="mini-icon cyan">↗</span></div><div class="metric" id="ibovValue">— <small>pts</small></div><div class="metric-foot muted" id="ibovChange">Aguardando fonte</div></article>
+          <article class="summary-card glass"><div class="card-heading"><span>Dólar comercial</span><span class="mini-icon violet">$</span></div><div class="metric" id="dollarValue">R$ —</div><div class="metric-foot muted" id="dollarChange">Aguardando fonte</div></article>
+          <article class="summary-card glass"><div class="card-heading"><span>Selic</span><span class="mini-icon violet">%</span></div><div class="metric" id="selicValue">— <small>% a.a.</small></div><div class="metric-foot muted" id="selicMeta">Banco Central</div></article>
+          <article class="summary-card glass"><div class="card-heading"><span>Patrimônio total</span><span class="mini-icon cyan">◈</span></div><div class="metric" id="totalValue">R$ —</div><div class="metric-foot muted" id="totalPositions">Sem posições</div></article>
+          <article class="summary-card glass"><div class="card-heading"><span>Resultado do dia</span><span class="mini-icon green">↗</span></div><div class="metric" id="dayPnl">R$ —</div><div class="metric-foot muted" id="dayPnlPercent">Sem posições</div></article>
+          <article class="summary-card glass"><div class="card-heading"><span>Resultado total</span><span class="mini-icon green">↗</span></div><div class="metric" id="totalPnl">R$ —</div><div class="metric-foot muted" id="totalPnlPercent">Sem posições</div></article>
+        </div>
+        <section class="content-grid">
+          <article class="panel glass chart-panel"><div class="panel-head"><div><p class="eyebrow">MERCADO BRASILEIRO</p><h2>Ibovespa <span class="muted" id="ibovChartPrice">—</span></h2></div><div class="period-tabs"><button data-period="1d">1D</button><button data-period="5d">1S</button><button data-period="1mo">1M</button><button data-period="6mo">6M</button><button class="selected" data-period="1y">1A</button></div></div><div class="chart-wrap"><canvas id="ibovChart" aria-label="Gráfico do Ibovespa"></canvas><div class="chart-message" id="chartMessage">Configure uma fonte de dados para visualizar cotações reais.</div></div><div class="chart-footer"><span id="quoteTimestamp">Sem cotação</span><span class="muted">Dados sujeitos à disponibilidade da fonte</span></div></article>
+          <article class="panel glass allocation-panel"><div class="panel-head"><div><p class="eyebrow">DISTRIBUIÇÃO</p><h2>Composição da carteira</h2></div></div><div class="allocation-chart"><canvas id="allocationChart" aria-label="Gráfico da carteira"></canvas></div><p class="empty-row" id="allocationEmpty">Nenhuma posição cadastrada</p></article>
+        </section>
+        <section class="content-grid lower-grid">
+          <article class="panel glass movers-panel"><div class="panel-head"><div><p class="eyebrow">DESTAQUES DO PREGÃO</p><h2>Maiores variações</h2></div></div><div class="movers-columns"><div><h3><i class="positive-dot"></i> Maiores altas</h3><div id="topGainers" class="empty-row">Sem cotações disponíveis</div></div><div><h3><i class="negative-dot"></i> Maiores quedas</h3><div id="topLosers" class="empty-row">Sem cotações disponíveis</div></div></div><small class="scope-notice" id="moversScope"></small></article>
+          <article class="panel glass signals-panel"><div class="panel-head"><div><p class="eyebrow">ANÁLISE TRANSPARENTE</p><h2>Sinais do dia</h2></div></div><div id="dashboardSignals" class="signal-list"><p class="empty-row">Cadastre ativos na carteira ou watchlist para analisar.</p></div><div class="disclaimer">Sinais são estudo e análise de dados, não recomendação de investimento. Nenhum sinal garante resultado.</div></article>
+        </section>
+        <section class="content-grid"><article class="panel glass"><div class="panel-head"><div><p class="eyebrow">BANCO CENTRAL</p><h2>Indicadores e expectativas</h2></div></div><p class="empty-row" id="marketNews">Selic: aguardando consulta ao Banco Central. O boletim Focus não está configurado.</p></article></section>
+      </section>
+
+      <section class="page-section" id="page-carteira">
+        <div class="panel glass"><div class="panel-head"><div><p class="eyebrow">ACOMPANHAMENTO DE POSIÇÕES</p><h2>Minha Carteira</h2></div><button class="button button-primary small-button" id="addPositionToggle">+ Adicionar ativo</button></div>
+          <form id="positionForm" class="inline-form" hidden><label>Ticker<input name="ticker" placeholder="PETR4" pattern="[A-Za-z0-9]{4,12}" required></label><label>Quantidade<input name="quantity" type="number" step="any" min="0.0001" required></label><label>Preço médio (R$)<input name="average_price" type="number" step="any" min="0.01" required></label><label>Data da compra<input name="purchased_at" type="date" required></label><label>Taxas (R$)<input name="fees" type="number" step="any" min="0" value="0"></label><button class="button button-primary small-button" type="submit">Salvar</button></form>
+          <div class="table-scroll"><table><thead><tr><th>Ativo</th><th>Qtd.</th><th>Preço médio</th><th>Preço atual</th><th>Dia</th><th>Resultado</th><th>Investido</th><th>Valor atual</th><th>Peso</th><th></th></tr></thead><tbody id="portfolioRows"><tr><td colspan="10" class="empty-row">Carregando carteira…</td></tr></tbody></table></div><div class="portfolio-footer"><span id="portfolioQuoteStatus">Cotações atualizadas conforme disponibilidade da fonte.</span><strong id="portfolioTotal">P&L: R$ —</strong></div>
+        </div>
+        <article class="panel glass" style="margin-top:16px"><div class="panel-head"><div><p class="eyebrow">MOTOR AUDITÁVEL</p><h2>Backtest de sinais</h2></div></div><div class="disclaimer standalone">Sinais são estudo e análise de dados, não recomendação de investimento. Nenhum sinal garante resultado.</div><form id="backtestForm" class="inline-form compact"><label>Ticker<input name="ticker" placeholder="PETR4" required></label><button class="button button-primary small-button">Executar backtest</button></form><div id="backtestResult" class="empty-row"></div></article>
+      </section>
+
+      <section class="page-section" id="page-oportunidades">
+        <div class="disclaimer standalone">Sinais são estudo e análise de dados, não recomendação de investimento. Nenhum sinal garante resultado.</div>
+        <section class="content-grid">                        <article class="panel glass"><div class="panel-head"><div><p class="eyebrow">QUEDAS NO MERCADO</p><h2>Quedas relevantes</h2></div></div><div class="inline-form compact"><label>Período<select id="opportunityTimeframe"><option value="day">Dia</option><option value="week">Semana</option><option value="month">Mês</option></select></label><label>Queda mínima (%)<input id="dropThreshold" type="number" value="3" min="0.1" step="0.1"></label><label>Liquidez mínima (ações/dia)<input id="minimumVolume" type="number" value="0" min="0"></label><label>Setor<input id="sectorFilter" placeholder="Todos"></label><button class="button button-primary small-button" id="loadOpportunities">Atualizar</button></div><small class="scope-notice" id="opportunityScope"></small><div id="opportunityList" class="data-list"><p class="empty-row">Carregando oportunidades…</p></div></article>
+        <article class="panel glass"><div class="panel-head"><div><p class="eyebrow">SEUS ATIVOS</p><h2>Já tenho na carteira</h2></div></div><div id="ownedOpportunityList" class="data-list"><p class="empty-row">Cadastre ativos na carteira.</p></div></article></section>
+      </section>
+
+      <section class="page-section" id="page-watchlist">
+        <article class="panel glass"><div class="panel-head"><div><p class="eyebrow">ACOMPANHAMENTO</p><h2>Watchlist</h2></div></div><form id="watchlistForm" class="inline-form compact"><label>Adicionar ticker<input name="ticker" placeholder="VALE3" required></label><button class="button button-primary small-button">Adicionar</button></form><div class="table-scroll"><table><thead><tr><th>Ativo</th><th>Preço</th><th>Dia</th><th>Mín./máx. 52s</th><th>Volume</th><th>P/L</th><th>DY</th><th></th></tr></thead><tbody id="watchlistRows"><tr><td colspan="8" class="empty-row">Watchlist vazia</td></tr></tbody></table></div></article>
+        <article class="panel glass" style="margin-top:16px"><div class="panel-head"><div><p class="eyebrow">NOTIFICAÇÕES DE PREÇO</p><h2>Alertas</h2></div></div><form id="alertForm" class="inline-form compact"><label>Ticker<input name="ticker" placeholder="VALE3" required></label><label>Condição<select name="kind"><option value="above">Preço acima de</option><option value="below">Preço abaixo de</option><option value="drop_percent">Queda diária maior que (%)</option></select></label><label>Valor<input name="threshold" type="number" step="any" required></label><button class="button button-primary small-button">Criar alerta</button></form><div id="firedAlerts" class="data-list"></div><div id="alertList" class="data-list"></div></article>
+      </section>
+
+      <section class="page-section" id="page-relatorios"><article class="panel glass"><div class="panel-head"><div><p class="eyebrow">RESUMO AUTOMÁTICO</p><h2>Relatórios diários</h2></div><button class="button button-primary small-button" id="generateReport">Gerar agora</button></div><p class="muted">Agendamentos em dias úteis: 09:30 e 18:30 (horário de Brasília). Configure e-mail e Telegram no arquivo .env.</p><div id="reportList" class="report-list"><p class="empty-row">Nenhum relatório salvo.</p></div></article></section>
+
+      <section class="page-section" id="page-configuracoes"><article class="panel glass settings-panel"><div class="panel-head"><div><p class="eyebrow">SEGURANÇA</p><h2>Alterar senha</h2></div></div><p class="muted">Use uma senha exclusiva com pelo menos 8 caracteres.</p><form id="passwordForm" class="settings-form"><label>Senha atual<input name="current_password" type="password" autocomplete="current-password" required></label><label>Nova senha<input name="new_password" type="password" minlength="8" autocomplete="new-password" required></label><button class="button button-primary">Salvar nova senha</button></form><div id="passwordMessage" class="form-feedback" role="status"></div><div class="settings-info"><h3>Fonte de dados</h3><p>Fonte configurada: <code>MARKET_DATA_PROVIDER</code>. Credenciais brapi.dev permanecem no servidor, em variáveis de ambiente.</p><p>Intervalo mínimo de atualização configurável: <code>MARKET_POLL_SECONDS</code> (padrão: 60s).</p></div></article></section>
+      <footer class="page-footer"><span>B3 Monitor · Dados sujeitos à disponibilidade da fonte.</span><span>Estudo de dados, não recomendação.</span></footer>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

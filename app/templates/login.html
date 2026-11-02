@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar · B3 Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="login-page">
+  <main class="login-card glass">
+    <div class="brand-mark">B<span>3</span></div>
+    <p class="eyebrow">SEU PAINEL DE MERCADO</p>
+    <h1>Bem-vindo<br>de volta.</h1>
+    <p class="muted">Acompanhe seus investimentos com clareza.</p>
+    {% if error %}<div class="form-error" role="alert">{{ error }}</div>{% endif %}
+    <form method="post" action="/login" class="login-form">
+      <label for="username">Usuário</label>
+      <input id="username" name="username" autocomplete="username" required autofocus>
+      <label for="password">Senha</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button class="button button-primary" type="submit">Entrar <span>→</span></button>
+    </form>
+    <p class="login-foot">Acesso pessoal e protegido</p>
+  </main>
+  <div class="login-glow"></div>
+</body>
+</html>

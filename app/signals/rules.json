@@ -1,0 +1,19 @@
+{
+  "fundamental": [
+    {"key": "pe_ratio", "label": "P/L positivo e até 15", "operator": "between", "min": 0, "max": 15, "weight": 10},
+    {"key": "price_to_book", "label": "P/VP positivo e até 2", "operator": "between", "min": 0, "max": 2, "weight": 10},
+    {"key": "dividend_yield", "label": "Dividend yield acima de 4%", "operator": "gte", "value": 0.04, "weight": 10},
+    {"key": "roe", "label": "ROE acima de 10%", "operator": "gte", "value": 0.10, "weight": 10},
+    {"key": "net_debt_to_ebitda", "label": "Dívida líquida/EBITDA abaixo de 3", "operator": "lte", "value": 3, "weight": 10},
+    {"key": "average_volume", "label": "Volume médio diário acima de 1 milhão de ações", "operator": "gte", "value": 1000000, "weight": 10}
+  ],
+  "technical": [
+    {"key": "above_sma20", "label": "Preço acima da média móvel de 20 períodos", "weight": 10},
+    {"key": "above_sma50", "label": "Preço acima da média móvel de 50 períodos", "weight": 10},
+    {"key": "above_sma200", "label": "Preço acima da média móvel de 200 períodos", "weight": 10},
+    {"key": "rsi_14", "label": "RSI entre 30 e 70", "weight": 10},
+    {"key": "macd_positive", "label": "MACD positivo", "weight": 5},
+    {"key": "relative_volume", "label": "Volume acima da média de 20 períodos", "weight": 5}
+  ],
+  "thresholds": {"buy": 70, "attention": 40}
+}
