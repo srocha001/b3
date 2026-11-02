@@ -33,6 +33,15 @@ O SQLite é salvo como `b3_monitor.db` na pasta atual por padrão. Para outro ca
 ## Fonte de dados
 
 - `MARKET_DATA_PROVIDER=brapi` usa brapi.dev para cotações, histórico e fundamentos. `BRAPI_TOKEN` permanece no backend; nunca é enviado ao navegador. A lista pública de mercado pode mostrar um resumo sem token, mas consultas detalhadas e múltiplos ativos dependem das permissões/limites da conta. Configure um token para carteira, watchlist e fundamentos; respostas 401/429 são descritas sem expor a chave.
+- `MARKET_DATA_PROVIDER=yfinance` usa Yahoo Finance como alternativa com atraso; `YFINANCE_TICKERS` aceita uma lista separada por vírgulas. A lista de ativos, em ambos os provedores, depende da cobertura e dos limites da fonte e não deve ser interpretada como inventário completo garantido da B3.
+- Últimas cotações e candles consultados com sucesso são mantidos no SQLite para leitura quando o provedor falha. Cotação/histórico local é identificado como salvo/atrasado. O estado do pregão usa o calendário de feriados local e informa o horário de negociação quando a fonte o fornece; na ausência do timestamp da fonte, a tela identifica o horário programado de fechamento.
+- O gráfico de candles usa OHLC fornecido pelo provedor. Se a fonte disponibilizar apenas preço de fechamento, o sistema informa que não há dados OHLC para fabricar velas.
+
+## Notícias, IA e Radar de Traders
+
+- O painel consulta o feed RSS público do Google News em português; indisponibilidade do feed aparece na tela. Impactos sem IA são hipóteses baseadas em palavras-chave e relações de nomes/setores, nunca fatos ou recomendações.
+- Para análise opcional por IA compatível com a API de chat completions, configure `AI_API_KEY`, `AI_API_BASE_URL` e `AI_MODEL` em `.env`. As manchetes e os indicadores enviados ao serviço de IA são dados da análise; use apenas um serviço em que confie. Chaves permanecem no backend. Sem chave, notícias usam regras explícitas e o radar exibe cenários de volatilidade histórica, sem alegar probabilidade calibrada.
+- O Radar filtra quedas e liquidez dos ativos retornados pela fonte. Fluxo comprador e quantidade de negócios não são informados de modo confiável pelos provedores atuais; essa limitação é indicada. Cenários de entrada/alvo/stop são referências hipotéticas, não ordens nem aconselhamento financeiro.
 - `MARKET_DATA_PROVIDER=yfinance` seleciona Yahoo Finance. Configure `YFINANCE_TICKERS` (lista separada por vírgula) para habilitar o painel de maiores altas e quedas nesse modo.
 - `MARKET_POLL_SECONDS` controla a consulta do WebSocket (padrão 60 s; mínimo operacional 15 s). A frequência efetiva depende da fonte e do plano de acesso.
 - Quando a consulta falha, a última cotação brapi em cache pode ser mostrada como atrasada, com a idade do cache. Se não existir cache utilizável, a interface sinaliza indisponibilidade.

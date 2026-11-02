@@ -1,6 +1,9 @@
+.env
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
-.env
-*.db
+b3_monitor.db
+b3_monitor.db-shm
+b3_monitor.db-wal
+*.zip
