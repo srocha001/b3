@@ -1,9 +1,0 @@
-.env
-.venv/
-__pycache__/
-*.py[cod]
-.pytest_cache/
-b3_monitor.db
-b3_monitor.db-shm
-b3_monitor.db-wal
-*.zip
